@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { LogIn, Zap } from 'lucide-react';
@@ -135,6 +135,13 @@ export default function Login() {
 
         <p className="mt-4 text-center text-xs text-slate-500">
           Demo: admin@archdesign.com / password123
+        </p>
+
+        <p className="mt-4 text-center text-sm text-slate-400">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-400 hover:text-blue-300">
+            Create one
+          </Link>
         </p>
       </div>
     </div>

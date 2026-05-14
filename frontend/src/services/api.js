@@ -31,6 +31,9 @@ api.interceptors.response.use(
 export const login = (email, password) =>
   api.post('/auth/login', { email, password }).then((r) => r.data);
 
+export const register = (name, email, password) =>
+  api.post('/auth/register', { name, email, password }).then((r) => r.data);
+
 export const getMe = () => api.get('/auth/me').then((r) => r.data);
 
 // ── Features metadata ──────────────────────────────────────────
@@ -92,5 +95,44 @@ export const changePassword = (currentPassword, newPassword) =>
 // ── CSV Export ──────────────────────────────────────────────────
 export const exportCSV = (featureKey) =>
   api.get(`/${featureKey}/export/csv`, { responseType: 'blob' }).then((r) => r.data);
+
+// ── AI History ──────────────────────────────────────────────────
+export const getAIHistory = (params = {}) =>
+  api.get('/ai-history', { params }).then((r) => r.data);
+
+// ── Global Search ───────────────────────────────────────────────
+export const globalSearch = (q, features = '') =>
+  api.get('/search', { params: { q, features } }).then((r) => r.data);
+
+// ── Design Comparison ───────────────────────────────────────────
+export const compareDesigns = (design_id_a, design_id_b) =>
+  api.post('/ai/compare-designs', { design_id_a, design_id_b }).then((r) => r.data);
+
+// ── Batch AI Generate ───────────────────────────────────────────
+export const batchGenerate = (featureKey, item_ids) =>
+  api.post(`/${featureKey}/batch-generate`, { item_ids }).then((r) => r.data);
+
+// ── AI Extras (NEW audit-proposed features) ─────────────────────
+export const aiExtras = {
+  // 1. Architecture Template Library
+  template: (payload) => api.post('/ai-extras/template', payload).then((r) => r.data),
+  listTemplates: (params) => api.get('/ai-extras/template', { params }).then((r) => r.data),
+  // 2. Accessibility Audit
+  accessibilityAudit: (payload) => api.post('/ai-extras/accessibility-audit', payload).then((r) => r.data),
+  listAccessibilityAudits: (params) => api.get('/ai-extras/accessibility-audit', { params }).then((r) => r.data),
+  // 3. Collaborative Markup Tool
+  postComment: (payload) => api.post('/ai-extras/comments', payload).then((r) => r.data),
+  listComments: (designId) => api.get(`/ai-extras/comments/${designId}`).then((r) => r.data),
+  synthesizeComments: (designId) => api.post(`/ai-extras/comments/${designId}/synthesize`).then((r) => r.data),
+  // 4. Interior Color Harmony
+  colorHarmony: (payload) => api.post('/ai-extras/color-harmony', payload).then((r) => r.data),
+  listColorPalettes: (params) => api.get('/ai-extras/color-harmony', { params }).then((r) => r.data),
+  // 5. Lighting Simulation
+  lightingSimulation: (payload) => api.post('/ai-extras/lighting-simulation', payload).then((r) => r.data),
+  listLightingSimulations: (params) => api.get('/ai-extras/lighting-simulation', { params }).then((r) => r.data),
+  // 6. Furniture Arrangement
+  furnitureArrangement: (payload) => api.post('/ai-extras/furniture-arrangement', payload).then((r) => r.data),
+  listFurnitureArrangements: (params) => api.get('/ai-extras/furniture-arrangement', { params }).then((r) => r.data),
+};
 
 export default api;

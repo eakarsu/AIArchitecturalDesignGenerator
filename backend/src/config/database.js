@@ -8,11 +8,15 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'arch_design_generator',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
+  max: parseInt(process.env.DB_POOL_MAX, 10) || 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 });
 
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  // Don't exit — let the server handle reconnections
 });
 
 const featureTables = [
@@ -101,6 +105,26 @@ async function initDatabase() {
         details TEXT,
         created_at TIMESTAMP DEFAULT NOW()
       );
+    `);
+
+    // Central AI results table (cross-feature history)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS ai_results (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        feature_key VARCHAR(100) NOT NULL,
+        item_id INTEGER,
+        item_name VARCHAR(255),
+        result_data JSONB NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    // Create index for faster history queries
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_ai_results_user_id ON ai_results(user_id);
+      CREATE INDEX IF NOT EXISTS idx_ai_results_feature_key ON ai_results(feature_key);
+      CREATE INDEX IF NOT EXISTS idx_ai_results_created_at ON ai_results(created_at DESC);
     `);
 
     console.log('Database tables initialized successfully');

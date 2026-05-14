@@ -1,10 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import FeaturePage from './pages/FeaturePage';
 import ItemDetail from './pages/ItemDetail';
 import Profile from './pages/Profile';
+import AIExtras from './pages/AIExtras';
+import AIHistory from './pages/AIHistory';
+import DesignCompare from './pages/DesignCompare';
+import AIBacklog from './pages/AIBacklog';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -54,6 +59,14 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
@@ -74,6 +87,38 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai-extras"
+        element={
+          <ProtectedRoute>
+            <AIExtras />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai-history"
+        element={
+          <ProtectedRoute>
+            <AIHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/compare"
+        element={
+          <ProtectedRoute>
+            <DesignCompare />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai-backlog"
+        element={
+          <ProtectedRoute>
+            <AIBacklog />
           </ProtectedRoute>
         }
       />
