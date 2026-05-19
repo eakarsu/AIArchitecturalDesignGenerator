@@ -434,6 +434,9 @@ app.put('/api/auth/password', authMiddleware, async (req, res) => {
   }
 });
 
+// === Custom Views (Design Views) — must be before 404 handler ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found.' });

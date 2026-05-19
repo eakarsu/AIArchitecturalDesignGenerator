@@ -1,10 +1,14 @@
 const rateLimit = require('express-rate-limit');
+const { ipKeyGenerator } = rateLimit;
+
+const ipKey = (req) =>
+  typeof ipKeyGenerator === 'function' ? ipKeyGenerator(req.ip) : req.ip;
 
 // General limiter: 100 requests per 15 minutes per IP
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  keyGenerator: (req) => req.user?.id ? `user:${req.user.id}` : req.ip,
+  keyGenerator: (req) => (req.user?.id ? `user:${req.user.id}` : ipKey(req)),
   message: { error: 'Too many requests. Limit is 100 per 15 minutes.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -14,7 +18,7 @@ const generalLimiter = rateLimit({
 const aiRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 20,
-  keyGenerator: (req) => req.user?.id ? `user:${req.user.id}` : req.ip,
+  keyGenerator: (req) => (req.user?.id ? `user:${req.user.id}` : ipKey(req)),
   message: { error: 'Too many AI requests. Limit is 20 per hour.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -24,7 +28,7 @@ const aiRateLimiter = rateLimit({
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  keyGenerator: (req) => req.ip,
+  keyGenerator: (req) => ipKey(req),
   message: { error: 'Too many login attempts. Please try again in 15 minutes.' },
   standardHeaders: true,
   legacyHeaders: false,

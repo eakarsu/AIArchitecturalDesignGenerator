@@ -153,6 +153,14 @@ export default function Navbar() {
               ✨ AI Extras
             </button>
             <button
+              onClick={() => navigate('/custom-views')}
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-cyan-200 hover:bg-cyan-600/20 hover:text-white"
+              title="Design Views"
+              data-testid="nav-design-views"
+            >
+              📐 Design Views
+            </button>
+            <button
               onClick={() => navigate('/ai-backlog')}
               className="rounded-lg px-3 py-1.5 text-sm font-medium text-emerald-200 hover:bg-emerald-600/20 hover:text-white"
               title="AI Backlog"

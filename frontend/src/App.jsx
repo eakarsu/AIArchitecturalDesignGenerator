@@ -10,6 +10,7 @@ import AIExtras from './pages/AIExtras';
 import AIHistory from './pages/AIHistory';
 import DesignCompare from './pages/DesignCompare';
 import AIBacklog from './pages/AIBacklog';
+import CustomViewsPage from './pages/CustomViewsPage';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -127,6 +128,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <ItemDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/custom-views"
+        element={
+          <ProtectedRoute>
+            <CustomViewsPage />
           </ProtectedRoute>
         }
       />
