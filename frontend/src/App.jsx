@@ -11,6 +11,12 @@ import AIHistory from './pages/AIHistory';
 import DesignCompare from './pages/DesignCompare';
 import AIBacklog from './pages/AIBacklog';
 import CustomViewsPage from './pages/CustomViewsPage';
+import PermitSetReadiness from './pages/PermitSetReadiness';
+
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -51,6 +57,10 @@ function PublicRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
+        <Route path="/insights/timeline" element={<ProtectedRoute><TimelineView /></ProtectedRoute>} />
+        <Route path="/codex/custom-viz" element={<ProtectedRoute><CodexCustomVizFeature /></ProtectedRoute>} />
+        <Route path="/codex/operations" element={<ProtectedRoute><CodexOperationsFeature /></ProtectedRoute>} />
+
       <Route
         path="/login"
         element={
@@ -136,6 +146,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CustomViewsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/permit-set-readiness"
+        element={
+          <ProtectedRoute>
+            <PermitSetReadiness />
           </ProtectedRoute>
         }
       />
