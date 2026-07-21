@@ -1,0 +1,35 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: arch_design_generator }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/arch_design_generator
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: arch_design_generator
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ci-only-secret-with-more-than-32-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm, cache-dependency-path: backend/package-lock.json }
+      - run: npm ci
+        working-directory: backend
+      - run: npm test
+        working-directory: backend
+      - run: node -e "require('./src/config/database').initDatabase().then(() => require('./src/config/database').pool.end())"
+        working-directory: backend
+      - run: ./scripts/migrate.sh
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend

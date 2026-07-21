@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const { pool, initDatabase, featureTables } = require('./config/database');
+const { pool, featureTables } = require('./config/database');
 const features = require('./config/features');
 const authRoutes = require('./routes/auth');
 const { createFeatureRouter } = require('./routes/features');
@@ -18,6 +18,7 @@ const { callOpenRouter } = require('./utils/aiHelper');
 
 const app = express();
 const PORT = parseInt(process.env.BACKEND_PORT, 10) || 3001;
+if (process.env.NODE_ENV === 'production' && !process.env.CLIENT_URL && !process.env.CORS_ORIGIN) throw new Error('CLIENT_URL or CORS_ORIGIN is required in production');
 
 // Security headers
 app.use(helmet({
@@ -62,14 +63,14 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 
 // AI routes (includes /api/ai/* endpoints and /api/ai/designs/:id/upload)
-app.use('/api/ai', aiRoutes);
+if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai', aiRoutes);
 
 // AI Extras routes (template, accessibility, comments, color, lighting, furniture)
-app.use('/api/ai-extras', aiExtrasRoutes);
+if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai-extras', aiExtrasRoutes);
 
 // AI Backlog routes (apply pass 5 — precedent search, BIM, render-spec, structural-advisor,
 // energy-model, plugin-export, material-library, cad-conversion, design versions, comments+lock)
-app.use('/api/ai', aiBacklogRoutes);
+if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai', aiBacklogRoutes);
 
 // Feature routes
 for (const [key, config] of Object.entries(features)) {
@@ -410,8 +411,8 @@ app.put('/api/auth/password', authMiddleware, async (req, res) => {
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ error: 'Current and new passwords are required.' });
     }
-    if (newPassword.length < 6) {
-      return res.status(400).json({ error: 'New password must be at least 6 characters.' });
+    if (newPassword.length < 12) {
+      return res.status(400).json({ error: 'New password must be at least 12 characters.' });
     }
 
     const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
@@ -437,6 +438,7 @@ app.put('/api/auth/password', authMiddleware, async (req, res) => {
 // === Custom Views (Design Views) — must be before 404 handler ===
 app.use('/api/custom-views', require('./routes/customViews'));
 app.use('/api/permit-set-readiness', require('./routes/permitSetReadiness'));
+app.use('/api/governed-designs', require('./routes/governedDesigns'));
 
 // 404 handler
 app.use((req, res) => {
@@ -454,9 +456,6 @@ let server;
 
 async function start() {
   try {
-    await initDatabase();
-    console.log('Database initialized successfully');
-
     server = app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
       console.log(`Features loaded: ${Object.keys(features).join(', ')}`);
@@ -493,21 +492,3 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 start();
-
-// BATCH_00_AUDIT_MOUNTS
-app.use('/api/design-to-cad', require('./routes/designToCad'));
-app.use('/api/bim-generation', require('./routes/bimGeneration'));
-app.use('/api/energy-modeling', require('./routes/energyModeling'));
-app.use('/api/material-library', require('./routes/materialLibrary'));
-app.use('/api/cad-plugin-bridge', require('./routes/cadPluginBridge'));
-
-// === Batch 00 Gaps & Frontend Mounts ===
-app.use('/api/gap-ai-precedent-project-search-similar', require('./routes/gap_ai_precedent_project_search_similar'));
-app.use('/api/gap-ai-design-bim-conversion-2d', require('./routes/gap_ai_design_bim_conversion_2d'));
-app.use('/api/gap-ai-structural-feasibility-checker', require('./routes/gap_ai_structural_feasibility_checker'));
-app.use('/api/gap-ai-energy-modeling-pipeline', require('./routes/gap_ai_energy_modeling_pipeline'));
-app.use('/api/gap-multi-user-collaborative-design-editing', require('./routes/gap_multi_user_collaborative_design_editing'));
-app.use('/api/gap-design-version-control-branching', require('./routes/gap_design_version_control_branching'));
-app.use('/api/gap-native-rendering-visualization-pipeline', require('./routes/gap_native_rendering_visualization_pipeline'));
-app.use('/api/gap-structural-analysis-hooks', require('./routes/gap_structural_analysis_hooks'));
-app.use('/api/gap-outbound-webhooks', require('./routes/gap_outbound_webhooks'));

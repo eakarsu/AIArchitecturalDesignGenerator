@@ -22,8 +22,8 @@ router.post('/register', async (req, res) => {
     if (!isValidEmail(email)) {
       return res.status(400).json({ error: 'Invalid email address.' });
     }
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+    if (password.length < 12) {
+      return res.status(400).json({ error: 'Password must be at least 12 characters.' });
     }
 
     // Check for existing user
@@ -34,7 +34,7 @@ router.post('/register', async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      `INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING id, email, name, created_at`,
+      `INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING id, email, name, role, created_at`,
       [email.toLowerCase(), hashed, name || email.split('@')[0]]
     );
 
