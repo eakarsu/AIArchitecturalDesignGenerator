@@ -5,6 +5,12 @@ const bcrypt = require('bcryptjs');
 if (!/^yes$/i.test(process.env.CONFIRM_DEMO_SEED || '')) throw new Error('Refusing destructive demo seed without CONFIRM_DEMO_SEED=yes');
 const { pool, featureTables } = require('./config/database');
 
+function requireDemoPassword() {
+  const password = process.env.DEMO_PASSWORD || process.env.SEED_DEMO_PASSWORD || process.env.DEMO_SEED_PASSWORD || '';
+  if (password.length < 12 || password.length > 1024) throw new Error('DEMO_PASSWORD must contain 12-1024 characters');
+  return password;
+}
+
 async function seed() {
   const client = await pool.connect();
 
@@ -43,7 +49,7 @@ async function seed() {
     }
 
     console.log('Creating demo user...');
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    const hashedPassword = await bcrypt.hash(requireDemoPassword(), 10);
     await client.query(
       `INSERT INTO users (email, password, name) VALUES ($1, $2, $3)`,
       ['admin@archdesign.com', hashedPassword, 'Admin User']
@@ -2349,7 +2355,7 @@ async function seed() {
     console.log('\nSeed completed successfully!');
     console.log('Login credentials:');
     console.log('  Email: admin@archdesign.com');
-    console.log('  Password: password123');
+    console.log('Demo login users provisioned from the local environment.');
   } catch (err) {
     console.error('Seed error:', err.message);
     throw err;

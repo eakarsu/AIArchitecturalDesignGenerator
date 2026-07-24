@@ -27,8 +27,8 @@ export default function Login() {
   };
 
   const handleDemo = async () => {
-    const demoEmail = 'admin@archdesign.com';
-    const demoPassword = 'password123';
+    const demoEmail = import.meta.env.VITE_DEMO_EMAIL || '';
+    const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || '';
     setEmail(demoEmail);
     setPassword(demoPassword);
     setDemoLoading(true);
