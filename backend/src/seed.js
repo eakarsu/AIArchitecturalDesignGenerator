@@ -2,7 +2,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 const bcrypt = require('bcryptjs');
-if (process.env.CONFIRM_DEMO_SEED !== 'yes') throw new Error('Refusing destructive demo seed without CONFIRM_DEMO_SEED=yes');
+if (!/^yes$/i.test(process.env.CONFIRM_DEMO_SEED || '')) throw new Error('Refusing destructive demo seed without CONFIRM_DEMO_SEED=yes');
 const { pool, featureTables } = require('./config/database');
 
 async function seed() {

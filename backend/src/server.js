@@ -61,6 +61,7 @@ app.get('/api/health', (req, res) => {
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+app.use('/api/runtime-ai', require('./routes/runtimeAi'));
 
 // AI routes (includes /api/ai/* endpoints and /api/ai/designs/:id/upload)
 if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai', aiRoutes);
