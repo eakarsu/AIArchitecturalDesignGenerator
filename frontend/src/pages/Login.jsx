@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { LogIn, Zap } from 'lucide-react';
+import { getDemoCredentials } from '../services/api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -27,17 +28,13 @@ export default function Login() {
   };
 
   const handleDemo = async () => {
-    const demoEmail = import.meta.env.VITE_DEMO_EMAIL || '';
-    const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || '';
-    setEmail(demoEmail);
-    setPassword(demoPassword);
     setDemoLoading(true);
     try {
-      await login(demoEmail, demoPassword);
-      toast.success('Welcome to the demo!');
-      navigate('/dashboard');
+      const credentials = await getDemoCredentials();
+      setEmail(credentials.email);
+      setPassword(credentials.password);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Demo login failed');
+      toast.error(err.response?.data?.error || 'Demo credentials are unavailable');
     } finally {
       setDemoLoading(false);
     }
@@ -128,13 +125,13 @@ export default function Login() {
           ) : (
             <>
               <Zap size={18} className="text-yellow-400" />
-              Demo Login
+              Auto Fill Demo Credentials
             </>
           )}
         </button>
 
         <p className="mt-4 text-center text-xs text-slate-500">
-          Demo: admin@archdesign.com / password123
+          Fill the local demo account, then click Sign In.
         </p>
 
         <p className="mt-4 text-center text-sm text-slate-400">
