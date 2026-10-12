@@ -86,6 +86,10 @@ function RenderValue({ value, depth = 0 }) {
   }
 
   if (typeof value === 'string') {
+    if (value === '') return <span className="text-slate-500 italic">Empty string</span>;
+    if (/^\s*[\[{]/.test(value)) {
+      try { return <RenderValue value={JSON.parse(value)} depth={depth + 1} />; } catch { /* Display ordinary text. */ }
+    }
     if (isPercentage(value)) {
       const pct = getPercentValue(value);
       return (
@@ -102,6 +106,11 @@ function RenderValue({ value, depth = 0 }) {
 
   if (Array.isArray(value)) {
     if (value.length === 0) return <span className="text-slate-500 italic">None</span>;
+
+    if (value.every((item) => item && typeof item === 'object' && !Array.isArray(item))) {
+      const columns = [...new Set(value.flatMap((item) => Object.keys(item)))];
+      return <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr>{columns.map((key) => <th key={key} className="border-b border-slate-600 p-2 text-slate-300">{formatKey(key)}</th>)}</tr></thead><tbody>{value.map((row, index) => <tr key={index}>{columns.map((key) => <td key={key} className="border-b border-slate-700 p-2 align-top"><RenderValue value={row[key]} depth={depth + 1} /></td>)}</tr>)}</tbody></table></div>;
+    }
 
     // If array of primitives
     if (value.every((v) => typeof v !== 'object' || v === null)) {
@@ -150,10 +159,14 @@ function RenderValue({ value, depth = 0 }) {
 }
 
 export default function AIResultDisplay({ result }) {
-  if (!result || typeof result !== 'object') return null;
+  if (result === null || result === undefined) return null;
 
   // If result is wrapped in a data key
-  const data = result.data || result;
+  const data = result && typeof result === 'object' && !Array.isArray(result) && Object.hasOwn(result, 'data') ? result.data : result;
+
+  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+    return <div className="ai-section border-l-4 border-l-blue-500 text-sm leading-relaxed"><RenderValue value={data} /></div>;
+  }
 
   const entries = Object.entries(data).filter(
     ([k]) => !['id', '_id', 'createdAt', 'updatedAt', '__v'].includes(k)

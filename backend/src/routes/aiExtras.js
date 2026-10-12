@@ -146,6 +146,7 @@ Return JSON: {
 
 router.get('/template', authMiddleware, async (req, res) => {
   try {
+    await ensureTables();
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const offset = (page - 1) * limit;
@@ -198,6 +199,7 @@ Return JSON: {
 
 router.get('/accessibility-audit', authMiddleware, async (req, res) => {
   try {
+    await ensureTables();
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const offset = (page - 1) * limit;
@@ -306,6 +308,7 @@ Return JSON: {
 
 router.get('/color-harmony', authMiddleware, async (req, res) => {
   try {
+    await ensureTables();
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const offset = (page - 1) * limit;
@@ -354,6 +357,7 @@ Return JSON: {
 
 router.get('/lighting-simulation', authMiddleware, async (req, res) => {
   try {
+    await ensureTables();
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const offset = (page - 1) * limit;
@@ -408,6 +412,7 @@ Return JSON: {
 
 router.get('/furniture-arrangement', authMiddleware, async (req, res) => {
   try {
+    await ensureTables();
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const offset = (page - 1) * limit;

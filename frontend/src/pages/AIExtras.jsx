@@ -1,3 +1,5 @@
+
+import FullAIExamples, { useFullAIExamples } from "../components/FullAIExamples.jsx";
 import { useEffect, useState } from 'react';
 import { aiExtras } from '../services/api';
 import Navbar from '../components/Navbar';
@@ -23,6 +25,8 @@ function Card({ title, children }) {
 }
 
 export default function AIExtras() {
+  const fullAIExamples = useFullAIExamples();
+
   const [tab, setTab] = useState('template');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -96,14 +100,14 @@ export default function AIExtras() {
                 value={templateType}
                 onChange={(e) => setTemplateType(e.target.value)}
                 placeholder="Type: kitchen / bedroom / bathroom..."
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: templateType, change: (e) => setTemplateType(e.target.value), label: "templateType", manual: false, json: false, sample: 'kitchen' }, "p1-3163", undefined)}
               />
               <textarea
                 value={dimensions}
                 onChange={(e) => setDimensions(e.target.value)}
                 placeholder="Dimensions JSON"
                 rows={3}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: dimensions, change: (e) => setDimensions(e.target.value), label: "dimensions", manual: false, json: false, sample: '{ "length_ft": 14, "width_ft": 12 }' }, "p1-3473", undefined)}
               />
             </div>
             <button
@@ -129,13 +133,13 @@ export default function AIExtras() {
                 value={designId}
                 onChange={(e) => setDesignId(e.target.value)}
                 placeholder="Optional: design_id"
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: designId, change: (e) => setDesignId(e.target.value), label: "designId", manual: false, json: false, sample: '' }, "p1-4652", undefined)}
               />
               <input
                 value={occupancyType}
                 onChange={(e) => setOccupancyType(e.target.value)}
                 placeholder="Occupancy type"
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: occupancyType, change: (e) => setOccupancyType(e.target.value), label: "occupancyType", manual: false, json: false, sample: 'B-Business' }, "p1-4936", undefined)}
               />
             </div>
             <button
@@ -176,13 +180,13 @@ export default function AIExtras() {
                 value={commentDesignId}
                 onChange={(e) => setCommentDesignId(e.target.value)}
                 placeholder="design_id"
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: commentDesignId, change: (e) => setCommentDesignId(e.target.value), label: "commentDesignId", manual: false, json: false, sample: '' }, "p1-6695", undefined)}
               />
               <input
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Your comment..."
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: commentText, change: (e) => setCommentText(e.target.value), label: "commentText", manual: false, json: false, sample: '' }, "p1-6983", undefined)}
               />
             </div>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -261,13 +265,13 @@ export default function AIExtras() {
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
                 placeholder="Room type"
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: roomType, change: (e) => setRoomType(e.target.value), label: "roomType", manual: false, json: false, sample: 'living-room' }, "p1-10680", undefined)}
               />
               <input
                 value={mood}
                 onChange={(e) => setMood(e.target.value)}
                 placeholder="Mood (calm-modern, vibrant-bohemian...)"
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: mood, change: (e) => setMood(e.target.value), label: "mood", manual: false, json: false, sample: 'calm-modern' }, "p1-10954", undefined)}
               />
             </div>
             <button
@@ -334,21 +338,21 @@ export default function AIExtras() {
                 onChange={(e) => setRoomDims(e.target.value)}
                 placeholder="Room dimensions JSON"
                 rows={3}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: roomDims, change: (e) => setRoomDims(e.target.value), label: "roomDims", manual: false, json: false, sample: '{ "length_ft": 16, "width_ft": 12, "height_ft": 9 }' }, "p1-14233", undefined)}
               />
               <textarea
                 value={windows}
                 onChange={(e) => setWindows(e.target.value)}
                 placeholder="Windows JSON"
                 rows={3}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: windows, change: (e) => setWindows(e.target.value), label: "windows", manual: false, json: false, sample: '[ { "wall": "south", "width_ft": 4, "height_ft": 5 } ]' }, "p1-14564", undefined)}
               />
             </div>
             <input
               value={orientation}
               onChange={(e) => setOrientation(e.target.value)}
               placeholder="Orientation (N/S/E/W)"
-              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100"
+              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: orientation, change: (e) => setOrientation(e.target.value), label: "orientation", manual: false, json: false, sample: 'south' }, "p1-14902", undefined)}
             />
             <button
               disabled={loading}
@@ -377,14 +381,14 @@ export default function AIExtras() {
                 onChange={(e) => setFurnDims(e.target.value)}
                 placeholder="Room dimensions JSON"
                 rows={3}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: furnDims, change: (e) => setFurnDims(e.target.value), label: "furnDims", manual: false, json: false, sample: '{ "length_ft": 16, "width_ft": 12 }' }, "p1-16144", undefined)}
               />
               <textarea
                 value={furniture}
                 onChange={(e) => setFurniture(e.target.value)}
                 placeholder="Furniture array JSON"
                 rows={3}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100"
+                className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100" data-full-ai-field={fullAIExamples.bind({ current: furniture, change: (e) => setFurniture(e.target.value), label: "furniture", manual: false, json: false, sample: '[ { "item": "sofa", "w_ft": 7, "d_ft": 3 }, { "item": "tv", "w_ft": 4, "d_ft": 0.5 } ]' }, "p1-16475", undefined)}
               />
             </div>
             <button
@@ -411,7 +415,7 @@ export default function AIExtras() {
   const displayResult = result?.result || result;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100">
+    <div className="min-h-screen bg-slate-900 text-slate-100" data-full-ai-workspace="AIExtras"><FullAIExamples controller={fullAIExamples} disabled={Boolean(loading)} />
       <Navbar />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <div className="mb-6 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 p-6">

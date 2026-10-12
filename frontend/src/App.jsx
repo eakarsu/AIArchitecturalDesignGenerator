@@ -1,3 +1,4 @@
+import AIReportLibrary from "./components/AIReportLibrary";
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
@@ -56,7 +57,7 @@ function PublicRoute({ children }) {
 
 function AppRoutes() {
   return (
-    <Routes>
+    <><AIReportLibrary floating /><Routes>
         <Route path="/insights/timeline" element={<ProtectedRoute><TimelineView /></ProtectedRoute>} />
         <Route path="/codex/custom-viz" element={<ProtectedRoute><CodexCustomVizFeature /></ProtectedRoute>} />
         <Route path="/codex/operations" element={<ProtectedRoute><CodexOperationsFeature /></ProtectedRoute>} />
@@ -158,7 +159,7 @@ function AppRoutes() {
         }
       />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+    </Routes></>
   );
 }
 

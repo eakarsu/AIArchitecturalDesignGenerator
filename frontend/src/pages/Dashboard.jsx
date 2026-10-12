@@ -49,11 +49,11 @@ export default function Dashboard() {
       const [featRes, analyticsRes, activityRes] = await Promise.allSettled([
         getFeatures(),
         getAnalytics(),
-        getActivity(10),
+        getActivity(20),
       ]);
 
       if (featRes.status === 'fulfilled') {
-        const featureList = featRes.value.data || featRes.value.features || featRes.value || [];
+        const featureList = [featRes.value?.data, featRes.value?.features, featRes.value].find(Array.isArray) || [];
         setFeatures(featureList);
 
         // Fetch counts for each feature in parallel
@@ -65,7 +65,8 @@ export default function Dashboard() {
         keys.forEach((k, i) => {
           if (countResults[i].status === 'fulfilled') {
             const r = countResults[i].value;
-            countMap[k] = r.total || r.pagination?.total || r.count || (r.data ? r.data.length : 0);
+            const rows = [r?.data, r?.items, r].find(Array.isArray) || [];
+            countMap[k] = r?.pagination?.total ?? r?.total ?? r?.count ?? rows.length;
           } else {
             countMap[k] = 0;
           }
@@ -85,7 +86,7 @@ export default function Dashboard() {
       }
 
       if (activityRes.status === 'fulfilled') {
-        setActivities(activityRes.value.activities || []);
+        setActivities(Array.isArray(activityRes.value?.activities) ? activityRes.value.activities : []);
       }
     } catch {
       // silent

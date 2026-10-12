@@ -116,6 +116,7 @@ export default function Login() {
 
         {/* Demo Login */}
         <button
+          type="button"
           onClick={handleDemo}
           disabled={demoLoading}
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 font-medium text-slate-200 hover:bg-slate-700 hover:border-slate-500 disabled:opacity-60"
@@ -125,7 +126,7 @@ export default function Login() {
           ) : (
             <>
               <Zap size={18} className="text-yellow-400" />
-              Auto Fill Demo Credentials
+              Fill Demo Credentials
             </>
           )}
         </button>

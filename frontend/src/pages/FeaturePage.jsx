@@ -38,7 +38,7 @@ export default function FeaturePage() {
   const [dateTo, setDateTo] = useState('');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
-  const limit = 10;
+  const limit = 20;
 
   const featureLabel = featureKey
     .replace(/-/g, ' ')
@@ -48,7 +48,7 @@ export default function FeaturePage() {
   useEffect(() => {
     getFeatures()
       .then((res) => {
-        const list = res.data || res.features || res || [];
+        const list = [res?.data, res?.features, res].find(Array.isArray) || [];
         const found = list.find(
           (f) => (f.key || f.featureKey) === featureKey
         );
@@ -70,8 +70,9 @@ export default function FeaturePage() {
         params.userId = user.id;
       }
       const res = await getItems(featureKey, params);
-      setItems(res.data || res.items || []);
-      setTotal(res.total || res.pagination?.total || res.count || (res.data ? res.data.length : 0));
+      const rows = [res?.data, res?.items, res].find(Array.isArray) || [];
+      setItems(rows);
+      setTotal(res?.pagination?.total ?? res?.total ?? res?.count ?? rows.length);
     } catch {
       setItems([]);
       setTotal(0);

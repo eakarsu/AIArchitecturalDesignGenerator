@@ -64,14 +64,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/runtime-ai', require('./routes/runtimeAi'));
 
 // AI routes (includes /api/ai/* endpoints and /api/ai/designs/:id/upload)
-if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai', aiRoutes);
+app.use('/api/ai', aiRoutes);
 
 // AI Extras routes (template, accessibility, comments, color, lighting, furniture)
-if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai-extras', aiExtrasRoutes);
+app.use('/api/ai-extras', aiExtrasRoutes);
 
 // AI Backlog routes (apply pass 5 — precedent search, BIM, render-spec, structural-advisor,
 // energy-model, plugin-export, material-library, cad-conversion, design versions, comments+lock)
-if (process.env.ENABLE_EXPERIMENTAL_AI === 'true') app.use('/api/ai', aiBacklogRoutes);
+app.use('/api/ai', aiBacklogRoutes);
 
 // Feature routes
 for (const [key, config] of Object.entries(features)) {
@@ -334,9 +334,9 @@ app.get('/api/analytics', authMiddleware, async (req, res) => {
       }
     }
 
-    // Sort recent items by updated_at and take top 10
+    // Sort recent items by updated_at and show at least a full record page.
     recentItems.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-    const topRecent = recentItems.slice(0, 10);
+    const topRecent = recentItems.slice(0, 15);
 
     // Totals
     let totalDraft = 0, totalInProgress = 0, totalCompleted = 0, totalItems = 0;
@@ -442,6 +442,14 @@ app.use('/api/permit-set-readiness', require('./routes/permitSetReadiness'));
 app.use('/api/governed-designs', require('./routes/governedDesigns'));
 
 // 404 handler
+
+// Advisory AI reports only; native execution and approval routes stay unchanged.
+const aiWorkspaceSupport = require("../aiWorkspaceAdapters.cjs");
+const aiWorkspaceDatabase = require("./config/database.js").pool;
+app.use('/api/report-workspace', require("../aiWorkspace.cjs").createAIWorkspaceRouter({
+  pool: aiWorkspaceDatabase, authenticateToken: require("./middleware/auth.js").authMiddleware,
+  aiRateLimiter: aiWorkspaceSupport.createWorkspaceLimiter(), features: require("../aiWorkspaceFeatures.json"),
+}));
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found.' });
 });

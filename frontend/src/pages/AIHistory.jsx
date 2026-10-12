@@ -22,7 +22,7 @@ export default function AIHistory() {
       const params = { page, limit };
       if (featureFilter) params.feature_key = featureFilter;
       const res = await api.get('/ai-history', { params }).then((r) => r.data);
-      setHistory(res.data || []);
+      setHistory([res?.data, res?.items, res].find(Array.isArray) || []);
       setTotalPages(res.pagination?.totalPages || 1);
       setTotal(res.pagination?.total || 0);
     } catch (err) {
