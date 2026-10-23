@@ -443,6 +443,10 @@ app.use('/api/governed-designs', require('./routes/governedDesigns'));
 
 // 404 handler
 
+app.use('/api/featurepack', authMiddleware, require('./featurepack').createFeaturePackRouter({
+  listRecords: async () => (await pool.query('SELECT * FROM building_designs ORDER BY created_at DESC LIMIT 200')).rows,
+}));
+
 // Advisory AI reports only; native execution and approval routes stay unchanged.
 const aiWorkspaceSupport = require("../aiWorkspaceAdapters.cjs");
 const aiWorkspaceDatabase = require("./config/database.js").pool;

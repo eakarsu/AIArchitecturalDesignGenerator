@@ -10,6 +10,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
+  const demoEmail = import.meta.env.VITE_DEMO_EMAIL || '';
+  const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || '';
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -25,6 +27,16 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fillDemoCredentials = async () => {
+    if (demoEmail && demoPassword) { setEmail(demoEmail); setPassword(demoPassword); return; }
+    try {
+      const res = await fetch('/api/auth/demo-credentials', { cache: 'no-store' });
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.email && data?.password) { setEmail(data.email); setPassword(data.password); return; }
+    } catch {}
+    toast.error('Demo credentials are not configured for this environment.');
   };
 
   const handleDemo = async () => {
@@ -130,6 +142,14 @@ export default function Login() {
             </>
           )}
         </button>
+        <button
+            type="button"
+            aria-label="Fill demo credentials"
+            onClick={fillDemoCredentials}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-600 bg-transparent px-4 py-2.5 font-medium text-slate-200 hover:bg-slate-700 hover:border-slate-500"
+          >
+            Fill demo credentials
+          </button>
 
         <p className="mt-4 text-center text-xs text-slate-500">
           Fill the local demo account, then click Sign In.
